@@ -64,3 +64,16 @@ pub fn spawn_immovable_enemy(ecs: &mut World, pos: Point) {
         FieldOfView::new(4)
     ));
 }
+
+pub fn spawn_ranged_missile(ecs: &mut World, pos: Point) {
+    ecs.push((
+        pos, 
+        Ranged {
+            range: 8
+        },
+        InflictsDamage {
+            damage: 8
+        },
+        Homing 
+    ));
+}

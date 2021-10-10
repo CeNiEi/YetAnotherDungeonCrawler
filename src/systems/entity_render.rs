@@ -1,5 +1,7 @@
 use crate::prelude::*;
 
+//TRY TO MERGE ALL THE RENDERABLE COMPONENETS INTO ONE
+
 #[system]
 #[read_component(Point)]
 #[read_component(MovableRender)]
@@ -23,7 +25,6 @@ pub fn movable_entity_render(
                     render.idle_glyph_vec[*frame_num / 4],
                 ),
                 Mode::LeftMove => {
-                    (*movable_sprite).mode = Mode::Idle;
                     draw_batch.set(
                         *pos - offset,
                         render.color,
@@ -31,7 +32,6 @@ pub fn movable_entity_render(
                     )
                 }
                 Mode::RightMove => {
-                    (*movable_sprite).mode = Mode::Idle;
                     draw_batch.set(
                         *pos - offset,
                         render.color,

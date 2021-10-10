@@ -18,6 +18,12 @@ pub struct ImmovableRender3x3 {
     pub glyph_grid: Vec<GlyphGrid>
 }
 
+#[derive(Clone, PartialEq)]
+pub struct MissileRender {
+    pub color: ColorPair,
+    pub glyph_vec: Vec<FontCharType>
+}
+
 #[derive(Clone, Copy, PartialEq)]
 pub enum Mode {
     LeftMove,
@@ -60,4 +66,23 @@ impl FieldOfView {
             is_dirty: true
         }
     }
+}
+
+#[derive(Copy, Clone, PartialEq)]
+pub struct Ranged {
+    pub range: i32
+}
+
+#[derive(Copy, Clone, PartialEq)]
+pub struct InflictsDamage {
+    pub damage: i32
+}
+
+#[derive(Clone, Copy, PartialEq)]
+pub struct Homing;
+
+#[derive(Clone, Copy, PartialEq)]
+pub struct WantsToMove {
+    pub entity: Entity,
+    pub destination: Point
 }
