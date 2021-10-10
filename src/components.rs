@@ -86,3 +86,15 @@ pub struct WantsToMove {
     pub entity: Entity,
     pub destination: Point
 }
+
+#[derive(Clone, Copy, PartialEq)]
+pub struct WantsToAttack {
+    pub attacker: Entity, 
+    pub victim: Entity
+}
+
+#[derive(Clone, Copy, PartialEq)]
+pub struct WantsToChangeMode {
+    pub entity: Entity, 
+    pub mode: Mode
+}
