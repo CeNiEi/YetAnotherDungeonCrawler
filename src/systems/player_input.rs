@@ -6,9 +6,7 @@ use crate::prelude::*;
 #[read_component(ImmovableEnemy)]
 pub fn player_input(
     ecs: &mut SubWorld,
-    #[resource] map: &Map,
     #[resource] key: &Option<VirtualKeyCode>,
-    #[resource] camera: &mut Camera,
     #[resource] turn_state: &mut TurnState,
     commands: &mut CommandBuffer,
 ) {
@@ -33,23 +31,27 @@ pub fn player_input(
             let mut hit_something = false;
             enemies
                 .iter(ecs)
-                .filter(|(_, pos)| **pos == destination)
-                .for_each(|(entity, _)| {
-                    hit_something = true;
-                    commands.push((
-                        (),
-                        WantsToAttack {
-                            attacker: player_entity,
-                            victim: *entity,
-                        },
-                    ));
-                    commands.push((
-                        (),
-                        WantsToChangeMode {
-                            entity: player_entity,
-                            mode: Mode::Attack,
-                        },
-                    ));
+                .filter(|(_, pos)| DistanceAlg::Pythagoras.distance2d(**pos, destination) < 5.0)
+                .for_each(|(entity, pos)| {
+                    if *pos == destination {
+                        hit_something = true;
+                        commands.push((
+                            (),
+                            WantsToAttack {
+                                attacker: player_entity,
+                                victim: *entity,
+                            },
+                        ));
+                        commands.push((
+                            (),
+                            WantsToChangeMovableSpriteMode {
+                                entity: player_entity,
+                                mode: MovableSpriteMode::Attack,
+                            },
+                        ));
+                    } else {
+                        spawn_homing_missile(commands, *pos);
+                    }
                 });
 
             if !hit_something {
@@ -64,25 +66,25 @@ pub fn player_input(
                 if delta == Point::new(-1, 0) {
                     commands.push((
                         (),
-                        WantsToChangeMode {
+                        WantsToChangeMovableSpriteMode {
                             entity: player_entity,
-                            mode: Mode::LeftMove,
+                            mode: MovableSpriteMode::LeftMove,
                         },
                     ));
                 } else if delta == Point::new(1, 0) {
                     commands.push((
                         (),
-                        WantsToChangeMode {
+                        WantsToChangeMovableSpriteMode {
                             entity: player_entity,
-                            mode: Mode::RightMove,
+                            mode: MovableSpriteMode::RightMove,
                         },
                     ));
                 } else {
                     commands.push((
                         (),
-                        WantsToChangeMode {
+                        WantsToChangeMovableSpriteMode {
                             entity: player_entity,
-                            mode: Mode::Idle,
+                            mode: MovableSpriteMode::Idle,
                         },
                     ));
                 }

@@ -1,5 +1,6 @@
 use crate::prelude::*;
-use std::collections::HashSet;
+
+//---RENDER COMPONENTS---//
 
 #[derive(Clone, PartialEq)] 
 pub struct MovableRender {
@@ -19,13 +20,14 @@ pub struct ImmovableRender3x3 {
 }
 
 #[derive(Clone, PartialEq)]
-pub struct MissileRender {
+pub struct RangedRender {
     pub color: ColorPair,
-    pub glyph_vec: Vec<FontCharType>
 }
 
+
+//---MODE COMPONENTS---//
 #[derive(Clone, Copy, PartialEq)]
-pub enum Mode {
+pub enum MovableSpriteMode {
     LeftMove,
     RightMove,
     Attack,
@@ -34,53 +36,41 @@ pub enum Mode {
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct MovableSprite {
-    pub mode: Mode
+    pub mode: MovableSpriteMode
 }
 
+pub enum RangedSpriteMode {
+    North, 
+    West, 
+    South, 
+    East
+}
+
+
+pub struct RangedSprite {
+    pub mode: RangedSpriteMode
+}
+
+//--ENTITY COMPONENTS--//
 #[derive(Clone, Copy, PartialEq)]
 pub struct Player;
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct ImmovableEnemy;
 
-#[derive(Clone, PartialEq)]
-pub struct FieldOfView {
-    pub visible_tiles: HashSet<Point>,
-    pub radius: i32, 
-    pub is_dirty: bool
-}
-
-impl FieldOfView {
-    pub fn new(radius: i32) -> Self {
-        Self {
-            visible_tiles: HashSet::new(),
-            radius, 
-            is_dirty: true
-        }
-    }
-
-    pub fn clone_dirty(&self) -> Self {
-        Self {
-            visible_tiles: HashSet::new(),
-            radius: self.radius,
-            is_dirty: true
-        }
-    }
-}
-
 #[derive(Copy, Clone, PartialEq)]
-pub struct Ranged {
-    pub range: i32
-}
+pub struct Ranged; 
 
 #[derive(Copy, Clone, PartialEq)]
 pub struct InflictsDamage {
     pub damage: i32
 }
 
-#[derive(Clone, Copy, PartialEq)]
+#[derive(Copy, Clone, PartialEq)]
 pub struct Homing;
 
+
+//---MESSAGES OF INTENT---//
 #[derive(Clone, Copy, PartialEq)]
 pub struct WantsToMove {
     pub entity: Entity,
@@ -94,7 +84,8 @@ pub struct WantsToAttack {
 }
 
 #[derive(Clone, Copy, PartialEq)]
-pub struct WantsToChangeMode {
+pub struct WantsToChangeMovableSpriteMode {
     pub entity: Entity, 
-    pub mode: Mode
+    pub mode: MovableSpriteMode
 }
+

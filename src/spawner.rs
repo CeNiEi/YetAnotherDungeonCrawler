@@ -3,7 +3,7 @@ use crate::prelude::*;
 pub fn spawn_player(ecs: &mut World, pos: Point) {
     ecs.push((
         MovableSprite {
-            mode: Mode::Idle
+            mode: MovableSpriteMode::Idle
         },
         Player,
         pos,
@@ -61,19 +61,23 @@ pub fn spawn_immovable_enemy(ecs: &mut World, pos: Point) {
                 glyph_grid_vec
             },
         },
-        FieldOfView::new(4)
     ));
 }
 
-pub fn spawn_ranged_missile(ecs: &mut World, pos: Point) {
-    ecs.push((
+pub fn spawn_homing_missile(commands: &mut CommandBuffer, pos: Point) {
+    
+    commands.push((
         pos, 
-        Ranged {
-            range: 8
-        },
+        Ranged,
+        Homing,
         InflictsDamage {
             damage: 8
         },
-        Homing 
+        RangedRender {
+            color: ColorPair::new(WHITE, BLACK)    
+        },
+        RangedSprite {
+            mode: RangedSpriteMode::East
+        }
     ));
 }
