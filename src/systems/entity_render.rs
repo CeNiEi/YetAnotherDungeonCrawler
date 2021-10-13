@@ -105,4 +105,6 @@ pub fn homing_missile_entity_render(
                 }
             },
         );
+
+    draw_batch.submit(15000).expect("batch error");
 }

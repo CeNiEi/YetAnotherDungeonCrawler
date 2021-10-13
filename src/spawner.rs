@@ -65,10 +65,8 @@ pub fn spawn_immovable_enemy(ecs: &mut World, pos: Point) {
 }
 
 pub fn spawn_homing_missile(commands: &mut CommandBuffer, pos: Point) {
-    
     commands.push((
         pos, 
-        Ranged,
         Homing,
         InflictsDamage {
             damage: 8
