@@ -40,10 +40,8 @@ pub struct MovableSprite {
 }
 
 pub enum RangedSpriteMode {
-    North, 
-    West, 
-    South, 
-    East
+    Moving,
+    Landed
 }
 
 
@@ -65,10 +63,6 @@ pub struct Ranged;
 pub struct InflictsDamage {
     pub damage: i32
 }
-
-#[derive(Copy, Clone, PartialEq)]
-pub struct Homing;
-
 
 //---MESSAGES OF INTENT---//
 #[derive(Clone, Copy, PartialEq)]

@@ -67,7 +67,7 @@ pub fn spawn_immovable_enemy(ecs: &mut World, pos: Point) {
 pub fn spawn_homing_missile(commands: &mut CommandBuffer, pos: Point) {
     commands.push((
         pos, 
-        Homing,
+        Ranged,
         InflictsDamage {
             damage: 8
         },
@@ -75,7 +75,7 @@ pub fn spawn_homing_missile(commands: &mut CommandBuffer, pos: Point) {
             color: ColorPair::new(WHITE, BLACK)    
         },
         RangedSprite {
-            mode: RangedSpriteMode::East
+            mode: RangedSpriteMode::Moving
         }
     ));
 }

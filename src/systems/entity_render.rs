@@ -77,7 +77,7 @@ pub fn immovable_entity_render_3x3(
 #[read_component(Point)]
 #[read_component(RangedRender)]
 #[read_component(RangedSprite)]
-#[read_component(Homing)]
+#[read_component(Ranged)]
 pub fn homing_missile_entity_render(
     ecs: &SubWorld,
     #[resource] camera: &Camera,
@@ -87,21 +87,15 @@ pub fn homing_missile_entity_render(
     let offset = Point::new(camera.left_x, camera.top_y);
 
     <(&Point, &RangedRender, &RangedSprite)>::query()
-        .filter(component::<Homing>())
+        .filter(component::<Ranged>())
         .iter(ecs)
         .for_each(
             |(pos, ranged_render, ranged_sprite)| match ranged_sprite.mode {
-                RangedSpriteMode::East => {
+                RangedSpriteMode::Moving => {
                     draw_batch.set(*pos - offset, ranged_render.color, to_cp437(to_char(225)));
                 }
-                RangedSpriteMode::North => {
+                RangedSpriteMode::Landed => {
                     draw_batch.set(*pos - offset, ranged_render.color, to_cp437(to_char(227)));
-                }
-                RangedSpriteMode::South => {
-                    draw_batch.set(*pos - offset, ranged_render.color, to_cp437(to_char(229)));
-                }
-                RangedSpriteMode::West => {
-                    draw_batch.set(*pos - offset, ranged_render.color, to_cp437(to_char(231)));
                 }
             },
         );

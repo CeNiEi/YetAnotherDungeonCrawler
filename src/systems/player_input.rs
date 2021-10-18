@@ -19,15 +19,21 @@ pub fn player_input(
             _ => Point::zero(),
         };
 
-        let mut players = <(Entity, &Point)>::query().filter(component::<Player>());
-
-        let (player_entity, destination) = players
-            .iter(ecs)
-            .find_map(|(entity, pos)| Some((*entity, *pos + delta)))
-            .unwrap();
-
-        let mut enemies = <(Entity, &Point)>::query().filter(component::<ImmovableEnemy>());
         if delta.x != 0 || delta.y != 0 {
+            let mut players = <(Entity, &Point)>::query().filter(component::<Player>());
+
+            let (player_entity, destination) = players
+                .iter(ecs)
+                .find_map(|(entity, pos)| Some((*entity, *pos + delta)))
+                .unwrap();
+
+            let mut enemies = <(Entity, &Point)>::query().filter(component::<ImmovableEnemy>());
+
+            let mut missiles_present = false;
+            for _ in <Entity>::query().filter(component::<Ranged>()).iter(ecs) {
+                missiles_present = true;
+            }
+
             let mut hit_something = false;
             enemies
                 .iter(ecs)
@@ -50,7 +56,9 @@ pub fn player_input(
                             },
                         ));
                     } else {
-                        spawn_homing_missile(commands, *pos);
+                        if !missiles_present {
+                            spawn_homing_missile(commands, *pos);
+                        }
                     }
                 });
 
