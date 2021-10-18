@@ -64,6 +64,12 @@ pub struct InflictsDamage {
     pub damage: i32
 }
 
+#[derive(Copy, Clone, PartialEq)]
+pub struct Health {
+    pub current: i32, 
+    pub max: i32
+}
+
 //---MESSAGES OF INTENT---//
 #[derive(Clone, Copy, PartialEq)]
 pub struct WantsToMove {

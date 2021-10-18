@@ -3,9 +3,10 @@ use crate::prelude::*;
 pub fn spawn_player(ecs: &mut World, pos: Point) {
     ecs.push((
         MovableSprite {
-            mode: MovableSpriteMode::Idle
+            mode: MovableSpriteMode::Idle,
         },
         Player,
+        Health {current: 20, max: 20},
         pos,
         MovableRender {
             color: ColorPair::new(WHITE, BLACK),
@@ -45,6 +46,7 @@ pub fn spawn_immovable_enemy(ecs: &mut World, pos: Point) {
     ecs.push((
         ImmovableEnemy,
         pos,
+        Health {current: 30, max: 30},
         ImmovableRender3x3 {
             color: ColorPair::new(WHITE, BLACK),
             glyph_grid: {
@@ -66,16 +68,15 @@ pub fn spawn_immovable_enemy(ecs: &mut World, pos: Point) {
 
 pub fn spawn_homing_missile(commands: &mut CommandBuffer, pos: Point) {
     commands.push((
-        pos, 
+        pos,
         Ranged,
-        InflictsDamage {
-            damage: 8
-        },
+        Health { current: 0, max: 0 },
+        InflictsDamage { damage: 8 },
         RangedRender {
-            color: ColorPair::new(WHITE, BLACK)    
+            color: ColorPair::new(WHITE, BLACK),
         },
         RangedSprite {
-            mode: RangedSpriteMode::Moving
-        }
+            mode: RangedSpriteMode::Moving,
+        },
     ));
 }
