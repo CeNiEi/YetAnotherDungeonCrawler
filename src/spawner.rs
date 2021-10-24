@@ -6,7 +6,10 @@ pub fn spawn_player(ecs: &mut World, pos: Point) {
             mode: MovableSpriteMode::Idle,
         },
         Player,
-        Health {current: 20, max: 20},
+        Health {
+            current: 20,
+            max: 20,
+        },
         pos,
         MovableRender {
             color: ColorPair::new(WHITE, BLACK),
@@ -46,7 +49,11 @@ pub fn spawn_immovable_enemy(ecs: &mut World, pos: Point) {
     ecs.push((
         ImmovableEnemy,
         pos,
-        Health {current: 30, max: 30},
+        InflictsDamage { damage: 1 },
+        Health {
+            current: 30,
+            max: 30,
+        },
         ImmovableRender3x3 {
             color: ColorPair::new(WHITE, BLACK),
             glyph_grid: {
@@ -67,16 +74,53 @@ pub fn spawn_immovable_enemy(ecs: &mut World, pos: Point) {
 }
 
 pub fn spawn_homing_missile(commands: &mut CommandBuffer, pos: Point) {
-    commands.push((
-        pos,
-        Ranged,
-        Health { current: 0, max: 0 },
-        InflictsDamage { damage: 8 },
-        RangedRender {
-            color: ColorPair::new(WHITE, BLACK),
-        },
-        RangedSprite {
-            mode: RangedSpriteMode::Moving,
-        },
-    ));
+    let mut rng = RandomNumberGenerator::new();
+    match rng.range(0, 5) {
+        0..=2 => {
+            commands.push((
+                pos,
+                Ranged,
+                Health { current: 0, max: 0 },
+                InflictsDamage { damage: 1 },
+                RangedRender {
+                    color: ColorPair::new(WHITE, BLACK),
+                    landed_glyph_vec: {
+                        let mut glyph_vec = vec![0; 3];
+                        for (i, symbol) in glyph_vec.iter_mut().enumerate() {
+                            *symbol = to_cp437(to_char((14 * 16 + 9 + i) as u8));
+                        }
+                        glyph_vec
+                    },
+                },
+                RangedSprite {
+                    mode: RangedSpriteMode::Moving,
+                },
+            ));
+        }
+        _ => {
+            commands.push((
+                pos,
+                Ranged,
+                AreaOfEffect { radius: 1 },
+                Health {
+                    current: 10,
+                    max: 10,
+                },
+                InflictsDamage { damage: 1 },
+                RangedRender {
+                    color: ColorPair::new(WHITE, BLACK),
+                    landed_glyph_vec: {
+                        let mut glyph_vec = vec![0; 6];
+                        for (i, symbol) in glyph_vec.iter_mut().enumerate() {
+                            *symbol = to_cp437(to_char((15 * 16 + 1 + i) as u8));
+                        }
+                        glyph_vec
+                    },
+                },
+                RangedSprite {
+                    mode: RangedSpriteMode::Moving,
+                },
+            ));
+        }
+    }
 }

@@ -22,6 +22,7 @@ pub struct ImmovableRender3x3 {
 #[derive(Clone, PartialEq)]
 pub struct RangedRender {
     pub color: ColorPair,
+    pub landed_glyph_vec: Vec<FontCharType>
 }
 
 
@@ -39,12 +40,14 @@ pub struct MovableSprite {
     pub mode: MovableSpriteMode
 }
 
+#[derive(Clone, Copy, PartialEq)]
 pub enum RangedSpriteMode {
     Moving,
     Landed
 }
 
 
+#[derive(Clone, Copy, PartialEq)]
 pub struct RangedSprite {
     pub mode: RangedSpriteMode
 }
@@ -58,6 +61,11 @@ pub struct ImmovableEnemy;
 
 #[derive(Copy, Clone, PartialEq)]
 pub struct Ranged; 
+
+#[derive(Clone, Copy, PartialEq)]
+pub struct AreaOfEffect {
+    pub radius: i32
+}
 
 #[derive(Copy, Clone, PartialEq)]
 pub struct InflictsDamage {
@@ -89,3 +97,8 @@ pub struct WantsToChangeMovableSpriteMode {
     pub mode: MovableSpriteMode
 }
 
+#[derive(Clone, Copy, PartialEq)]
+pub struct WantsToChangeRangedSpriteMode {
+    pub entity: Entity, 
+    pub mode: RangedSpriteMode
+}

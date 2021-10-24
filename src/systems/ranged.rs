@@ -4,6 +4,7 @@ use crate::prelude::*;
 #[read_component(Point)]
 #[read_component(Player)]
 #[read_component(Ranged)]
+#[read_component(RangedSprite)]
 pub fn ranged(#[resource] map: &Map, ecs: &SubWorld, commands: &mut CommandBuffer) {
     let mut player = <(Entity, &Point)>::query().filter(component::<Player>());
 
@@ -13,34 +14,43 @@ pub fn ranged(#[resource] map: &Map, ecs: &SubWorld, commands: &mut CommandBuffe
     let search_target = vec![player_idx];
     let dijkstra_map = DijkstraMap::new(SCREEN_WIDTH, SCREEN_HEIGHT, &search_target, map, 1024.0);
 
-    let mut missiles = <(Entity, &Point)>::query().filter(component::<Ranged>());
-    missiles.iter(ecs).for_each(|(entity, pos)| {
-        let idx = map_idx(pos.x, pos.y);
-        if let Some(destination) = DijkstraMap::find_lowest_exit(&dijkstra_map, idx, map) {
-            let distance = DistanceAlg::Pythagoras.distance2d(*pos, *player_pos);
+    let mut missiles = <(Entity, &Point, &RangedSprite)>::query().filter(component::<Ranged>());
+    missiles.iter(ecs).for_each(|(entity, pos, ranged_sprite)| {
+        if ranged_sprite.mode == RangedSpriteMode::Moving {
+            let idx = map_idx(pos.x, pos.y);
+            if let Some(destination) = DijkstraMap::find_lowest_exit(&dijkstra_map, idx, map) {
+                let distance = DistanceAlg::Pythagoras.distance2d(*pos, *player_pos);
 
-            let destination = if distance > 1.2 {
-                map.index_to_point2d(destination)
-            } else {
-                *player_pos
-            };
+                let destination = if distance > 1.2 {
+                    map.index_to_point2d(destination)
+                } else {
+                    *player_pos
+                };
 
-            if destination == *player_pos {
-                commands.push((
-                    (),
-                    WantsToAttack {
-                        attacker: *entity,
-                        victim: *player_entity,
-                    },
-                ));
-            } else {
-                commands.push((
-                    (),
-                    WantsToMove {
-                        entity: *entity,
-                        destination,
-                    },
-                ));
+                if destination == *player_pos {
+                    commands.push((
+                        (),
+                        WantsToChangeRangedSpriteMode {
+                            entity: *entity,
+                            mode: RangedSpriteMode::Landed,
+                        },
+                    ));
+                    commands.push((
+                        (),
+                        WantsToAttack {
+                            attacker: *entity,
+                            victim: *player_entity,
+                        },
+                    ));
+                } else {
+                    commands.push((
+                        (),
+                        WantsToMove {
+                            entity: *entity,
+                            destination,
+                        },
+                    ));
+                }
             }
         }
     });

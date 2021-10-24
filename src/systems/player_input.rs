@@ -5,6 +5,7 @@ use crate::prelude::*;
 #[read_component(Player)]
 #[read_component(ImmovableEnemy)]
 #[read_component(Ranged)]
+#[read_component(AreaOfEffect)]
 pub fn player_input(
     ecs: &mut SubWorld,
     #[resource] key: &Option<VirtualKeyCode>,
@@ -31,7 +32,10 @@ pub fn player_input(
             let mut enemies = <(Entity, &Point)>::query().filter(component::<ImmovableEnemy>());
 
             let mut missiles_present = false;
-            for _ in <Entity>::query().filter(component::<Ranged>()).iter(ecs) {
+            for _ in <Entity>::query()
+                .filter(component::<Ranged>() | component::<AreaOfEffect>())
+                .iter(ecs)
+            {
                 missiles_present = true;
             }
 
