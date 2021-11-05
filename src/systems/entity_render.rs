@@ -34,10 +34,15 @@ pub fn movable_entity_render(
                     render.color,
                     render.right_move_glyph_vec[*frame_num / 4],
                 ),
-                MovableSpriteMode::Attack => draw_batch.set(
+                MovableSpriteMode::RightAttack => draw_batch.set(
                     *pos - offset,
                     render.color,
-                    render.attack_glyph_vec[*frame_num / 4],
+                    render.right_attack_glyph_vec[*frame_num / 4],
+                ),
+                MovableSpriteMode::LeftAttack => draw_batch.set(
+                    *pos - offset,
+                    render.color,
+                    render.left_attack_glyph_vec[*frame_num / 4],
                 ),
             };
         });
@@ -60,12 +65,13 @@ pub fn immovable_entity_render_3x3(
     <(&Point, &ImmovableRender3x3)>::query()
         .iter(ecs)
         .for_each(|(pos, render3x3)| {
-            for row in 0..3 {
-                for col in 0..3 {
+            for row in -1_i32..=1_i32 {
+                for col in -1_i32..=1_i32 {
                     draw_batch.set(
                         *pos - offset + Point::new(col, row),
                         render3x3.color,
-                        render3x3.glyph_grid[*frame_num / 8][row][col],
+                        render3x3.glyph_grid[*frame_num / 8][(row + 1) as usize]
+                            [(col + 1) as usize],
                     );
                 }
             }

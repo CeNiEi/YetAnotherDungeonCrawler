@@ -34,10 +34,17 @@ pub fn spawn_player(ecs: &mut World, pos: Point) {
                 }
                 glyph_vec
             },
-            attack_glyph_vec: {
+            left_attack_glyph_vec: {
                 let mut glyph_vec = vec![0; 10];
                 for (i, symbol) in glyph_vec.iter_mut().enumerate() {
-                    *symbol = to_cp437(to_char((i + 1) as u8));
+                    *symbol = to_cp437(to_char((14 * 16 + 5 + i) as u8));
+                }
+                glyph_vec
+            },
+            right_attack_glyph_vec: {
+                let mut glyph_vec = vec![0; 10];
+                for (i, symbol) in glyph_vec.iter_mut().enumerate() {
+                    *symbol = to_cp437(to_char((48 + i + 1) as u8));
                 }
                 glyph_vec
             },
@@ -87,7 +94,7 @@ pub fn spawn_homing_missile(commands: &mut CommandBuffer, pos: Point) {
                     landed_glyph_vec: {
                         let mut glyph_vec = vec![0; 3];
                         for (i, symbol) in glyph_vec.iter_mut().enumerate() {
-                            *symbol = to_cp437(to_char((14 * 16 + 9 + i) as u8));
+                            *symbol = to_cp437(to_char((14 * 16 + 2 + i) as u8));
                         }
                         glyph_vec
                     },
@@ -112,7 +119,7 @@ pub fn spawn_homing_missile(commands: &mut CommandBuffer, pos: Point) {
                     landed_glyph_vec: {
                         let mut glyph_vec = vec![0; 6];
                         for (i, symbol) in glyph_vec.iter_mut().enumerate() {
-                            *symbol = to_cp437(to_char((15 * 16 + 1 + i) as u8));
+                            *symbol = to_cp437(to_char((15 * 16 + i) as u8));
                         }
                         glyph_vec
                     },

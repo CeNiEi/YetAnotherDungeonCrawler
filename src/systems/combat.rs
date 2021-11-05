@@ -16,7 +16,7 @@ pub fn combat(ecs: &mut SubWorld, commands: &mut CommandBuffer) {
             .unwrap()
             .get_component_mut::<Health>()
         {
-            health.current -= 1;
+            health.current -= 0;
             println!("{}, {}", health.current + 1, health.current);
             if health.current < 1 {
                 commands.remove(*victim);

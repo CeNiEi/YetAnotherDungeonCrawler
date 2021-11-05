@@ -52,6 +52,16 @@ pub fn ranged(#[resource] map: &Map, ecs: &SubWorld, commands: &mut CommandBuffe
                     ));
                 }
             }
+        } else {
+            if DistanceAlg::Pythagoras.distance2d(*pos, *player_pos) < 1.5 {
+                commands.push((
+                    (), 
+                    WantsToAttack {
+                        attacker: *entity, 
+                        victim: *player_entity
+                    }
+                ));
+            }
         }
     });
 }

@@ -6,6 +6,7 @@ use crate::prelude::*;
 #[read_component(ImmovableEnemy)]
 #[read_component(Ranged)]
 #[read_component(AreaOfEffect)]
+#[read_component(MovableSprite)]
 pub fn player_input(
     ecs: &mut SubWorld,
     #[resource] key: &Option<VirtualKeyCode>,
@@ -22,11 +23,14 @@ pub fn player_input(
         };
 
         if delta.x != 0 || delta.y != 0 {
-            let mut players = <(Entity, &Point)>::query().filter(component::<Player>());
+            let mut players =
+                <(Entity, &Point, &MovableSprite)>::query().filter(component::<Player>());
 
-            let (player_entity, destination) = players
+            let (player_entity, destination, mode) = players
                 .iter(ecs)
-                .find_map(|(entity, pos)| Some((*entity, *pos + delta)))
+                .find_map(|(entity, pos, movable_sprite)| {
+                    Some((*entity, *pos + delta, movable_sprite.mode))
+                })
                 .unwrap();
 
             let mut enemies = <(Entity, &Point)>::query().filter(component::<ImmovableEnemy>());
@@ -44,7 +48,7 @@ pub fn player_input(
                 .iter(ecs)
                 .filter(|(_, pos)| DistanceAlg::Pythagoras.distance2d(**pos, destination) < 5.0)
                 .for_each(|(entity, pos)| {
-                    if *pos == destination {
+                    if DistanceAlg::Pythagoras.distance2d(*pos, destination) < 1.5 {
                         hit_something = true;
                         commands.push((
                             (),
@@ -53,13 +57,25 @@ pub fn player_input(
                                 victim: *entity,
                             },
                         ));
-                        commands.push((
-                            (),
-                            WantsToChangeMovableSpriteMode {
-                                entity: player_entity,
-                                mode: MovableSpriteMode::Attack,
-                            },
-                        ));
+                        if mode == MovableSpriteMode::LeftMove
+                            || mode == MovableSpriteMode::LeftAttack
+                        {
+                            commands.push((
+                                (),
+                                WantsToChangeMovableSpriteMode {
+                                    entity: player_entity,
+                                    mode: MovableSpriteMode::LeftAttack,
+                                },
+                            ));
+                        } else {
+                            commands.push((
+                                (),
+                                WantsToChangeMovableSpriteMode {
+                                    entity: player_entity,
+                                    mode: MovableSpriteMode::RightAttack,
+                                },
+                            ));
+                        }
                     } else {
                         if !missiles_present {
                             spawn_homing_missile(commands, *pos);
@@ -76,7 +92,8 @@ pub fn player_input(
                     },
                 ));
 
-                if delta == Point::new(-1, 0) {
+                if delta == Point::new(0, 1) || delta == Point::new(0, -1) {
+                } else if delta == Point::new(-1, 0) {
                     commands.push((
                         (),
                         WantsToChangeMovableSpriteMode {
