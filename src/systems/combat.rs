@@ -16,8 +16,8 @@ pub fn combat(ecs: &mut SubWorld, commands: &mut CommandBuffer) {
             .unwrap()
             .get_component_mut::<Health>()
         {
-            health.current -= 0;
-            println!("{}, {}", health.current + 1, health.current);
+            health.current -= 1;
+            println!("{:?}, {}, {}", victim, health.current + 1, health.current);
             if health.current < 1 {
                 commands.remove(*victim);
             }
@@ -33,11 +33,11 @@ pub fn combat(ecs: &mut SubWorld, commands: &mut CommandBuffer) {
 
 #[system]
 #[write_component(Health)]
-#[read_component(Ranged)]
+#[read_component(Homing)]
 #[read_component(RangedSprite)]
 pub fn auto_reduce_health(ecs: &mut SubWorld, commands: &mut CommandBuffer) {
     let elements = <(Entity, &RangedSprite)>::query()
-        .filter(component::<Ranged>())
+        .filter(component::<Homing>())
         .iter(ecs)
         .filter(|(_, ranged_sprite)| ranged_sprite.mode == RangedSpriteMode::Landed)
         .map(|(entity, _)| *entity)

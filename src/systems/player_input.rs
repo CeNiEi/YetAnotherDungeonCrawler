@@ -3,8 +3,8 @@ use crate::prelude::*;
 #[system]
 #[read_component(Point)]
 #[read_component(Player)]
-#[read_component(ImmovableEnemy)]
-#[read_component(Ranged)]
+#[read_component(Enemy)]
+#[read_component(Homing)]
 #[read_component(AreaOfEffect)]
 #[read_component(MovableSprite)]
 pub fn player_input(
@@ -33,11 +33,13 @@ pub fn player_input(
                 })
                 .unwrap();
 
-            let mut enemies = <(Entity, &Point)>::query().filter(component::<ImmovableEnemy>());
+            let mut enemies = <(Entity, &Point)>::query().filter(component::<Enemy>());
 
             let mut missiles_present = false;
             for _ in <Entity>::query()
-                .filter(component::<Ranged>() | component::<AreaOfEffect>())
+                .filter(
+                    !component::<Enemy>() & (component::<Homing>() | component::<AreaOfEffect>()),
+                )
                 .iter(ecs)
             {
                 missiles_present = true;
@@ -48,7 +50,7 @@ pub fn player_input(
                 .iter(ecs)
                 .filter(|(_, pos)| DistanceAlg::Pythagoras.distance2d(**pos, destination) < 5.0)
                 .for_each(|(entity, pos)| {
-                    if DistanceAlg::Pythagoras.distance2d(*pos, destination) < 1.5 {
+                    if DistanceAlg::Pythagoras.distance2d(*pos, destination) < 1.2 {
                         hit_something = true;
                         commands.push((
                             (),
@@ -78,7 +80,11 @@ pub fn player_input(
                         }
                     } else {
                         if !missiles_present {
-                            spawn_homing_missile(commands, *pos);
+                            if let Err(_) =
+                                ecs.entry_ref(*entity).unwrap().get_component::<Homing>()
+                            {
+                                spawn_homing_missile(commands, *pos);
+                            }
                         }
                     }
                 });
@@ -119,7 +125,6 @@ pub fn player_input(
                     ));
                 }
             }
-
             *turn_state = TurnState::PlayerTurn;
         }
     }

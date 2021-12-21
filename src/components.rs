@@ -5,6 +5,7 @@ use crate::prelude::*;
 #[derive(Clone, PartialEq)]
 pub struct MovableRender {
     pub color: ColorPair,
+    pub monster: bool,
     pub left_move_glyph_vec: Vec<FontCharType>,
     pub right_move_glyph_vec: Vec<FontCharType>,
     pub idle_glyph_vec: Vec<FontCharType>,
@@ -57,10 +58,10 @@ pub struct RangedSprite {
 pub struct Player;
 
 #[derive(Clone, Copy, PartialEq)]
-pub struct ImmovableEnemy;
+pub struct Enemy;
 
 #[derive(Copy, Clone, PartialEq)]
-pub struct Ranged;
+pub struct Homing;
 
 #[derive(Clone, Copy, PartialEq)]
 pub struct AreaOfEffect {

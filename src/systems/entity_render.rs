@@ -12,12 +12,16 @@ pub fn movable_entity_render(
     #[resource] frame_num: &usize,
 ) {
     let mut draw_batch = DrawBatch::new();
-    draw_batch.target(1);
     let offset = Point::new(camera.left_x, camera.top_y);
 
     <(&Point, &MovableRender, &mut MovableSprite)>::query()
         .iter_mut(ecs)
         .for_each(|(pos, render, movable_sprite)| {
+            if render.monster {
+                draw_batch.target(2);
+            } else {
+                draw_batch.target(1);
+            }
             match movable_sprite.mode {
                 MovableSpriteMode::Idle => draw_batch.set(
                     *pos - offset,
@@ -83,14 +87,14 @@ pub fn immovable_entity_render_3x3(
 #[read_component(Point)]
 #[read_component(RangedRender)]
 #[read_component(RangedSprite)]
-#[read_component(Ranged)]
+#[read_component(Homing)]
 pub fn single_missile_entity_render(
     ecs: &SubWorld,
     #[resource] camera: &Camera,
     #[resource] frame_num: &usize,
 ) {
     let mut draw_batch = DrawBatch::new();
-    draw_batch.target(2);
+    draw_batch.target(1);
     let offset = Point::new(camera.left_x, camera.top_y);
 
     <(&Point, &RangedRender, &RangedSprite)>::query()
@@ -118,7 +122,7 @@ pub fn single_missile_entity_render(
 #[read_component(Point)]
 #[read_component(RangedRender)]
 #[read_component(RangedSprite)]
-#[read_component(Ranged)]
+#[read_component(Homing)]
 #[read_component(AreaOfEffect)]
 pub fn splash_missile_entity_render(
     ecs: &SubWorld,
@@ -127,7 +131,7 @@ pub fn splash_missile_entity_render(
     #[resource] frame_num: &usize,
 ) {
     let mut draw_batch = DrawBatch::new();
-    draw_batch.target(2);
+    draw_batch.target(1);
     let offset = Point::new(camera.left_x, camera.top_y);
 
     <(&Point, &RangedRender, &RangedSprite, &AreaOfEffect)>::query()
