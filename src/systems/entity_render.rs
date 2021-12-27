@@ -1,7 +1,5 @@
 use crate::prelude::*;
 
-//TRY TO MERGE ALL THE RENDERABLE COMPONENETS INTO ONE
-
 #[system]
 #[read_component(Point)]
 #[read_component(MovableRender)]
@@ -63,7 +61,7 @@ pub fn immovable_entity_render_3x3(
     #[resource] frame_num: &usize,
 ) {
     let mut draw_batch = DrawBatch::new();
-    draw_batch.target(1);
+    draw_batch.target(2);
     let offset = Point::new(camera.left_x, camera.top_y);
 
     <(&Point, &ImmovableRender3x3)>::query()
@@ -94,7 +92,7 @@ pub fn single_missile_entity_render(
     #[resource] frame_num: &usize,
 ) {
     let mut draw_batch = DrawBatch::new();
-    draw_batch.target(1);
+    draw_batch.target(2);
     let offset = Point::new(camera.left_x, camera.top_y);
 
     <(&Point, &RangedRender, &RangedSprite)>::query()
@@ -131,7 +129,7 @@ pub fn splash_missile_entity_render(
     #[resource] frame_num: &usize,
 ) {
     let mut draw_batch = DrawBatch::new();
-    draw_batch.target(1);
+    draw_batch.target(2);
     let offset = Point::new(camera.left_x, camera.top_y);
 
     <(&Point, &RangedRender, &RangedSprite, &AreaOfEffect)>::query()

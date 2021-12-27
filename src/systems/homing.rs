@@ -6,6 +6,7 @@ use crate::prelude::*;
 #[read_component(Homing)]
 #[read_component(Enemy)]
 #[read_component(RangedSprite)]
+#[read_component(MovableSprite)]
 pub fn homing(#[resource] map: &Map, ecs: &SubWorld, commands: &mut CommandBuffer) {
     let mut player = <(Entity, &Point)>::query().filter(component::<Player>());
 
@@ -66,38 +67,86 @@ pub fn homing(#[resource] map: &Map, ecs: &SubWorld, commands: &mut CommandBuffe
         }
     });
 
-    let mut moving_enemies =
-        <(Entity, &Point)>::query().filter(component::<Homing>() & component::<Enemy>());
+    let mut moving_enemies = <(Entity, &Point, &MovableSprite)>::query()
+        .filter(component::<Homing>() & component::<Enemy>());
 
-    moving_enemies.iter(ecs).for_each(|(entity, pos)| {
-        let idx = map_idx(pos.x, pos.y);
-        if let Some(destination) = DijkstraMap::find_lowest_exit(&dijkstra_map, idx, map) {
-            let distance = DistanceAlg::Pythagoras.distance2d(*pos, *player_pos);
-            let destination = if distance > 1.2 {
-                map.index_to_point2d(destination)
-            } else {
-                *player_pos
-            };
+    moving_enemies
+        .iter(ecs)
+        .for_each(|(entity, pos, movable_sprite)| {
+            let idx = map_idx(pos.x, pos.y);
+            if let Some(destination) = DijkstraMap::find_lowest_exit(&dijkstra_map, idx, map) {
+                let distance = DistanceAlg::Pythagoras.distance2d(*pos, *player_pos);
+                let destination = if distance > 1.2 {
+                    map.index_to_point2d(destination)
+                } else {
+                    *player_pos
+                };
 
-            if destination == *player_pos {
-                commands.push((
-                    (), 
-                    WantsToAttack {
-                        attacker: *entity, 
-                        victim: *player_entity
+                if destination == *player_pos {
+                    commands.push((
+                        (),
+                        WantsToAttack {
+                            attacker: *entity,
+                            victim: *player_entity,
+                        },
+                    ));
+
+                    if movable_sprite.mode == MovableSpriteMode::LeftMove
+                        || movable_sprite.mode == MovableSpriteMode::LeftAttack
+                    {
+                        commands.push((
+                            (),
+                            WantsToChangeMovableSpriteMode {
+                                entity: *entity,
+                                mode: MovableSpriteMode::LeftAttack,
+                            },
+                        ));
+                    } else {
+                        commands.push((
+                            (),
+                            WantsToChangeMovableSpriteMode {
+                                entity: *entity,
+                                mode: MovableSpriteMode::RightAttack,
+                            },
+                        ));
                     }
-                ));
-            } else {
-                commands.push((
-                    (), 
-                    WantsToMove {
-                        entity: *entity, 
-                        destination
+                } else {
+                    commands.push((
+                        (),
+                        WantsToMove {
+                            entity: *entity,
+                            destination,
+                        },
+                    ));
+
+                    let delta = destination - *pos;
+                    if delta == Point::new(0, 1) || delta == Point::new(0, -1) {
+                    } else if delta == Point::new(-1, 0) {
+                        commands.push((
+                            (),
+                            WantsToChangeMovableSpriteMode {
+                                entity: *entity,
+                                mode: MovableSpriteMode::LeftMove,
+                            },
+                        ));
+                    } else if delta == Point::new(1, 0) {
+                        commands.push((
+                            (),
+                            WantsToChangeMovableSpriteMode {
+                                entity: *entity,
+                                mode: MovableSpriteMode::RightMove,
+                            },
+                        ));
+                    } else {
+                        commands.push((
+                            (),
+                            WantsToChangeMovableSpriteMode {
+                                entity: *entity,
+                                mode: MovableSpriteMode::Idle,
+                            },
+                        ));
                     }
-                ));
+                }
             }
-
-        }
-    });
-    
+        });
 }
