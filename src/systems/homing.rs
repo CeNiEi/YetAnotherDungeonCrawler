@@ -10,7 +10,12 @@ use crate::prelude::*;
 pub fn homing(#[resource] map: &Map, ecs: &SubWorld, commands: &mut CommandBuffer) {
     let mut player = <(Entity, &Point)>::query().filter(component::<Player>());
 
-    let (player_entity, player_pos) = player.iter(ecs).nth(0).unwrap();
+    let player_item = player.iter(ecs).nth(0);
+    if player_item == None {
+        return;
+    }
+
+    let (player_entity, player_pos) = player_item.unwrap();
     let player_idx = map_idx(player_pos.x, player_pos.y);
 
     let search_target = vec![player_idx];

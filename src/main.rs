@@ -66,6 +66,34 @@ impl State {
             monster_systems: build_monster_scheduler(),
         }
     }
+
+    fn game_over(&mut self, ctx: &mut BTerm) {
+        ctx.set_active_console(3);
+        ctx.print_color_centered(2, RED, BLACK, "Your quest has ended");
+        ctx.print_color_centered(9, GREEN, BLACK, "Press 1 to play again.");
+
+        if let Some(VirtualKeyCode::Key1) = ctx.key {
+            self.ecs = World::default();
+            self.resources = Resources::default();
+            let map_builder = MapBuilder::new();
+
+            self.resources.insert(map_builder.map);
+            self.resources.insert(Camera::new(map_builder.player_start));
+            self.resources.insert(0_usize);
+            self.resources.insert(TurnState::AwaitingInput);
+
+            spawn_player(&mut self.ecs, map_builder.player_start);
+            map_builder
+                .immovable_enemies
+                .iter()
+                .for_each(|pos| spawn_immovable_enemy(&mut self.ecs, *pos));
+
+            map_builder
+                .movable_enemies
+                .iter()
+                .for_each(|pos| spawn_movable_enemy(&mut self.ecs, *pos));
+        }
+    }
 }
 
 impl GameState for State {
@@ -75,6 +103,8 @@ impl GameState for State {
         ctx.set_active_console(1);
         ctx.cls();
         ctx.set_active_console(2);
+        ctx.cls();
+        ctx.set_active_console(3);
         ctx.cls();
         self.resources.insert(ctx.key);
         let current_state = self.resources.get::<TurnState>().unwrap().clone();
@@ -88,6 +118,7 @@ impl GameState for State {
             TurnState::MonsterTurn => self
                 .monster_systems
                 .execute(&mut self.ecs, &mut self.resources),
+            TurnState::GameOver => self.game_over(ctx),
         }
         render_draw_buffer(ctx).expect("Render Error");
     }
@@ -102,12 +133,15 @@ fn main() -> BError {
         .with_resource_path("resources/")
         .with_font("dungeonfont_custom_1.png", 32, 32)
         .with_font("dungeonfont_custom_2.png", 32, 32)
+        .with_font("terminal8x8.png", 8, 8)
         //floor - 0
         .with_simple_console(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont_custom_1.png")
         //walls & entities - 1
         .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont_custom_1.png")
         //monsters - 2
         .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont_custom_2.png")
+        //tooltip - 3
+        .with_simple_console_no_bg(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, "terminal8x8.png")
         .build()?;
 
     main_loop(context, State::new())
