@@ -99,6 +99,7 @@ impl State {
 impl GameState for State {
     fn tick(&mut self, ctx: &mut BTerm) {
         ctx.set_active_console(0);
+        self.resources.insert(Point::from_tuple(ctx.mouse_pos()));
         ctx.cls();
         ctx.set_active_console(1);
         ctx.cls();
@@ -141,7 +142,7 @@ fn main() -> BError {
         //monsters - 2
         .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont_custom_2.png")
         //tooltip - 3
-        .with_simple_console_no_bg(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, "terminal8x8.png")
+        .with_simple_console_no_bg(SCREEN_WIDTH, SCREEN_HEIGHT, "terminal8x8.png")
         .build()?;
 
     main_loop(context, State::new())

@@ -2,10 +2,12 @@ mod combat;
 mod end_turn;
 mod entity_render;
 mod homing;
+mod hud;
 mod map_render;
 mod mode_change;
 mod movement;
 mod player_input;
+mod tooltips;
 
 use crate::prelude::*;
 
@@ -18,6 +20,8 @@ pub fn build_input_scheduler() -> Schedule {
         .add_system(entity_render::immovable_entity_render_3x3_system())
         .add_system(entity_render::single_missile_entity_render_system())
         .add_system(entity_render::splash_missile_entity_render_system())
+        .add_system(hud::hud_system())
+        .add_system(tooltips::tooltips_system())
         .build()
 }
 
@@ -34,6 +38,8 @@ pub fn build_player_scheduler() -> Schedule {
         .add_system(entity_render::splash_missile_entity_render_system())
         .flush()
         .add_system(end_turn::end_turn_system())
+        .add_system(hud::hud_system())
+        .add_system(tooltips::tooltips_system())
         .build()
 }
 
@@ -55,5 +61,7 @@ pub fn build_monster_scheduler() -> Schedule {
         .add_system(mode_change::change_ranged_sprite_mode_system())
         .add_system(mode_change::change_movable_sprite_mode_system())
         .add_system(end_turn::end_turn_system())
+        .add_system(hud::hud_system())
+        .add_system(tooltips::tooltips_system())
         .build()
 }

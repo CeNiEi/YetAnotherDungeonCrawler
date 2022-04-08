@@ -54,6 +54,10 @@ pub struct RangedSprite {
 }
 
 //--ENTITY COMPONENTS--//
+
+#[derive(Clone, PartialEq)]
+pub struct Name(pub String);
+
 #[derive(Clone, Copy, PartialEq)]
 pub struct Player;
 

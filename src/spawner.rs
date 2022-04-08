@@ -62,6 +62,7 @@ pub fn spawn_immovable_enemy(ecs: &mut World, pos: Point) {
             current: 30,
             max: 30,
         },
+        Name("BossMonster".to_string()),
         ImmovableRender3x3 {
             color: ColorPair::new(WHITE, BLACK),
             glyph_grid: {
@@ -89,6 +90,7 @@ pub fn spawn_movable_enemy(ecs: &mut World, pos: Point) {
         },
         pos,
         InflictsDamage { damage: 1 },
+        Name("Minion".to_string()),
         Homing,
         Health { current: 5, max: 5 },
         MovableRender {
