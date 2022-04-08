@@ -48,6 +48,7 @@ impl State {
         resources.insert(TurnState::AwaitingInput);
 
         spawn_player(&mut ecs, map_builder.player_start);
+        spawn_key(&mut ecs, map_builder.key_pos);
         map_builder
             .immovable_enemies
             .iter()
@@ -83,6 +84,7 @@ impl State {
             self.resources.insert(TurnState::AwaitingInput);
 
             spawn_player(&mut self.ecs, map_builder.player_start);
+            spawn_key(&mut self.ecs, map_builder.key_pos);
             map_builder
                 .immovable_enemies
                 .iter()

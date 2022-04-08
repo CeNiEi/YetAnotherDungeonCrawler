@@ -24,5 +24,5 @@ pub fn hud(ecs: &SubWorld) {
         ),
         ColorPair::new(WHITE, RED),
     );
-    draw_batch.submit(18000).expect("Batch error");
+    draw_batch.submit(20000).expect("Batch error");
 }

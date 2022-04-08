@@ -158,3 +158,21 @@ pub fn splash_missile_entity_render(
 
     draw_batch.submit(16000).expect("Batch error");
 }
+
+#[system]
+#[read_component(Point)]
+#[read_component(ItemRender)]
+pub fn item_render(ecs: &SubWorld, #[resource] camera: &Camera) {
+    let mut draw_batch = DrawBatch::new();
+    draw_batch.target(1);
+
+    let offset = Point::new(camera.left_x, camera.top_y);
+
+    <(&Point, &ItemRender)>::query()
+        .iter(ecs)
+        .for_each(|(pos, item_render)| {
+            draw_batch.set(*pos - offset, item_render.color, item_render.glyph);
+        });
+
+    draw_batch.submit(18000).expect("Batch error");
+}

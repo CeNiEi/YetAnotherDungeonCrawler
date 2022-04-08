@@ -3,6 +3,12 @@ use crate::prelude::*;
 //---RENDER COMPONENTS---//
 
 #[derive(Clone, PartialEq)]
+pub struct ItemRender {
+    pub color: ColorPair,
+    pub glyph: FontCharType
+}
+
+#[derive(Clone, PartialEq)]
 pub struct MovableRender {
     pub color: ColorPair,
     pub monster: bool,
@@ -54,6 +60,11 @@ pub struct RangedSprite {
 }
 
 //--ENTITY COMPONENTS--//
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Item;
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Key;
 
 #[derive(Clone, PartialEq)]
 pub struct Name(pub String);

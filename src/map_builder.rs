@@ -4,7 +4,8 @@ pub struct MapBuilder {
     pub map: Map,
     pub immovable_enemies: Vec<Point>,
     pub movable_enemies: Vec<Point>,
-    pub player_start: Point
+    pub player_start: Point,
+    pub key_pos: Point
 }
 
 impl MapBuilder {
@@ -24,7 +25,8 @@ impl MapBuilder {
             map, 
             immovable_enemies, 
             movable_enemies,
-            player_start: Point::new(54, 5)
+            player_start: Point::new(54, 5),
+            key_pos: Point::new(62, 77)
         }
     }
 }

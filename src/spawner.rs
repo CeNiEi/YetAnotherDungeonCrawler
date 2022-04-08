@@ -57,7 +57,6 @@ pub fn spawn_immovable_enemy(ecs: &mut World, pos: Point) {
     ecs.push((
         Enemy,
         pos,
-        InflictsDamage { damage: 1 },
         Health {
             current: 30,
             max: 30,
@@ -182,4 +181,17 @@ pub fn spawn_homing_missile(commands: &mut CommandBuffer, pos: Point) {
             ));
         }
     }
+}
+
+pub fn spawn_key(ecs: &mut World, pos: Point) {
+    ecs.push((
+        Item,
+        pos,
+        Name("key".to_string()),
+        Key,
+        ItemRender {
+            color: ColorPair::new(WHITE, BLACK),
+            glyph: to_cp437(to_char((9 * 16 + 11) as u8)),
+        },
+    ));
 }
