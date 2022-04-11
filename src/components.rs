@@ -1,11 +1,12 @@
 use crate::prelude::*;
+use std::collections::HashSet;
 
 //---RENDER COMPONENTS---//
 
 #[derive(Clone, PartialEq)]
 pub struct ItemRender {
     pub color: ColorPair,
-    pub glyph: FontCharType
+    pub glyph: FontCharType,
 }
 
 #[derive(Clone, PartialEq)]
@@ -60,6 +61,32 @@ pub struct RangedSprite {
 }
 
 //--ENTITY COMPONENTS--//
+
+#[derive(Clone, Debug, PartialEq)]
+pub struct FieldOfView {
+    pub visible_tiles: HashSet<Point>,
+    pub radius: i32,
+    pub is_dirty: bool,
+}
+
+impl FieldOfView {
+    pub fn new(radius: i32) -> Self {
+        Self {
+            visible_tiles: HashSet::new(), 
+            radius, 
+            is_dirty: true
+        }
+    }
+    pub fn clone_dirty(&self) -> Self {
+        Self {
+            visible_tiles: HashSet::new(), 
+            radius: self.radius, 
+            is_dirty: true
+        }
+    }
+}
+
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Item;
 
@@ -83,10 +110,13 @@ pub struct AreaOfEffect {
     pub radius: i32,
 }
 
+/* Not Needed Now
+
 #[derive(Copy, Clone, PartialEq)]
 pub struct InflictsDamage {
     pub damage: i32,
 }
+*/
 
 #[derive(Copy, Clone, PartialEq)]
 pub struct Health {

@@ -10,6 +10,7 @@ pub fn spawn_player(ecs: &mut World, pos: Point) {
             current: 20,
             max: 20,
         },
+        FieldOfView::new(8),
         pos,
         MovableRender {
             color: ColorPair::new(WHITE, BLACK),
@@ -88,7 +89,7 @@ pub fn spawn_movable_enemy(ecs: &mut World, pos: Point) {
             mode: MovableSpriteMode::Idle,
         },
         pos,
-        InflictsDamage { damage: 1 },
+        FieldOfView::new(6),
         Name("Minion".to_string()),
         Homing,
         Health { current: 5, max: 5 },
@@ -142,7 +143,6 @@ pub fn spawn_homing_missile(commands: &mut CommandBuffer, pos: Point) {
                 pos,
                 Homing,
                 Health { current: 0, max: 0 },
-                InflictsDamage { damage: 1 },
                 RangedRender {
                     color: ColorPair::new(WHITE, BLACK),
                     landed_glyph_vec: {
@@ -164,7 +164,6 @@ pub fn spawn_homing_missile(commands: &mut CommandBuffer, pos: Point) {
                 Homing,
                 AreaOfEffect { radius: 1 },
                 Health { current: 5, max: 5 },
-                InflictsDamage { damage: 1 },
                 RangedRender {
                     color: ColorPair::new(WHITE, BLACK),
                     landed_glyph_vec: {

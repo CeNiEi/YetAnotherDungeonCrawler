@@ -3,7 +3,9 @@ use crate::prelude::*;
 #[system]
 #[read_component(Point)]
 #[read_component(MovableRender)]
-#[write_component(MovableSprite)]
+#[read_component(MovableSprite)]
+#[read_component(FieldOfView)]
+#[read_component(Player)]
 pub fn movable_entity_render(
     ecs: &mut SubWorld,
     #[resource] camera: &Camera,
@@ -12,8 +14,17 @@ pub fn movable_entity_render(
     let mut draw_batch = DrawBatch::new();
     let offset = Point::new(camera.left_x, camera.top_y);
 
-    <(&Point, &MovableRender, &mut MovableSprite)>::query()
-        .iter_mut(ecs)
+    let mut fov = <&FieldOfView>::query().filter(component::<Player>());
+
+    let player_fov = fov.iter(ecs).nth(0);
+    if player_fov == None {
+        return;
+    }
+    let player_fov = player_fov.unwrap();
+
+    <(&Point, &MovableRender, &MovableSprite)>::query()
+        .iter(ecs)
+        .filter(|(pos, _, _)| player_fov.visible_tiles.contains(&pos))
         .for_each(|(pos, render, movable_sprite)| {
             if render.monster {
                 draw_batch.target(2);
@@ -55,6 +66,8 @@ pub fn movable_entity_render(
 #[system]
 #[read_component(Point)]
 #[read_component(ImmovableRender3x3)]
+#[read_component(FieldOfView)]
+#[read_component(Player)]
 pub fn immovable_entity_render_3x3(
     ecs: &SubWorld,
     #[resource] camera: &Camera,
@@ -64,8 +77,17 @@ pub fn immovable_entity_render_3x3(
     draw_batch.target(2);
     let offset = Point::new(camera.left_x, camera.top_y);
 
+    let mut fov = <&FieldOfView>::query().filter(component::<Player>());
+
+    let player_fov = fov.iter(ecs).nth(0);
+    if player_fov == None {
+        return;
+    }
+    let player_fov = player_fov.unwrap();
+
     <(&Point, &ImmovableRender3x3)>::query()
         .iter(ecs)
+        .filter(|(pos, _)| player_fov.visible_tiles.contains(&pos))
         .for_each(|(pos, render3x3)| {
             for row in -1_i32..=1_i32 {
                 for col in -1_i32..=1_i32 {
@@ -86,6 +108,8 @@ pub fn immovable_entity_render_3x3(
 #[read_component(RangedRender)]
 #[read_component(RangedSprite)]
 #[read_component(Homing)]
+#[read_component(FieldOfView)]
+#[read_component(Player)]
 pub fn single_missile_entity_render(
     ecs: &SubWorld,
     #[resource] camera: &Camera,
@@ -95,9 +119,18 @@ pub fn single_missile_entity_render(
     draw_batch.target(2);
     let offset = Point::new(camera.left_x, camera.top_y);
 
+    let mut fov = <&FieldOfView>::query().filter(component::<Player>());
+
+    let player_fov = fov.iter(ecs).nth(0);
+    if player_fov == None {
+        return;
+    }
+    let player_fov = player_fov.unwrap();
+
     <(&Point, &RangedRender, &RangedSprite)>::query()
         .filter(!component::<AreaOfEffect>())
         .iter(ecs)
+        .filter(|(pos, _, _)| player_fov.visible_tiles.contains(&pos))
         .for_each(
             |(pos, ranged_render, ranged_sprite)| match ranged_sprite.mode {
                 RangedSpriteMode::Moving => {
@@ -122,6 +155,8 @@ pub fn single_missile_entity_render(
 #[read_component(RangedSprite)]
 #[read_component(Homing)]
 #[read_component(AreaOfEffect)]
+#[read_component(FieldOfView)]
+#[read_component(Player)]
 pub fn splash_missile_entity_render(
     ecs: &SubWorld,
     #[resource] camera: &Camera,
@@ -132,8 +167,17 @@ pub fn splash_missile_entity_render(
     draw_batch.target(2);
     let offset = Point::new(camera.left_x, camera.top_y);
 
+    let mut fov = <&FieldOfView>::query().filter(component::<Player>());
+
+    let player_fov = fov.iter(ecs).nth(0);
+    if player_fov == None {
+        return;
+    }
+    let player_fov = player_fov.unwrap();
+
     <(&Point, &RangedRender, &RangedSprite, &AreaOfEffect)>::query()
         .iter(ecs)
+        .filter(|(pos, _, _, _)| player_fov.visible_tiles.contains(&pos))
         .for_each(
             |(pos, ranged_render, ranged_sprite, aoe)| match ranged_sprite.mode {
                 RangedSpriteMode::Moving => {
@@ -162,14 +206,25 @@ pub fn splash_missile_entity_render(
 #[system]
 #[read_component(Point)]
 #[read_component(ItemRender)]
+#[read_component(FieldOfView)]
+#[read_component(Player)]
 pub fn item_render(ecs: &SubWorld, #[resource] camera: &Camera) {
     let mut draw_batch = DrawBatch::new();
     draw_batch.target(1);
+
+    let mut fov = <&FieldOfView>::query().filter(component::<Player>());
+
+    let player_fov = fov.iter(ecs).nth(0);
+    if player_fov == None {
+        return;
+    }
+    let player_fov = player_fov.unwrap();
 
     let offset = Point::new(camera.left_x, camera.top_y);
 
     <(&Point, &ItemRender)>::query()
         .iter(ecs)
+        .filter(|(pos, _)| player_fov.visible_tiles.contains(&pos))
         .for_each(|(pos, item_render)| {
             draw_batch.set(*pos - offset, item_render.color, item_render.glyph);
         });
