@@ -58,8 +58,8 @@ pub fn spawn_immovable_enemy(ecs: &mut World, pos: Point) {
         Enemy,
         pos,
         Health {
-            current: 30,
-            max: 30,
+            current: 10,
+            max: 10,
         },
         Name("BossMonster".to_string()),
         ImmovableRender3x3 {

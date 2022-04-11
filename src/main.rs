@@ -68,32 +68,51 @@ impl State {
         }
     }
 
+    fn reset_game_state(&mut self) {
+        self.ecs = World::default();
+        self.resources = Resources::default();
+        let map_builder = MapBuilder::new();
+
+        self.resources.insert(map_builder.map);
+        self.resources.insert(Camera::new(map_builder.player_start));
+        self.resources.insert(0_usize);
+        self.resources.insert(TurnState::AwaitingInput);
+
+        spawn_player(&mut self.ecs, map_builder.player_start);
+        spawn_key(&mut self.ecs, map_builder.key_pos);
+        map_builder
+            .immovable_enemies
+            .iter()
+            .for_each(|pos| spawn_immovable_enemy(&mut self.ecs, *pos));
+
+        map_builder
+            .movable_enemies
+            .iter()
+            .for_each(|pos| spawn_movable_enemy(&mut self.ecs, *pos));
+    }
+
+    fn victory(&mut self, ctx: &mut BTerm) {
+        ctx.set_active_console(3);
+        ctx.print_color_centered(2, GREEN, BLACK, "You have won!");
+        ctx.print_color_centered(
+            7,
+            GREEN,
+            BLACK,
+            "Press 1 to \
+        play again.",
+        );
+        if let Some(VirtualKeyCode::Key1) = ctx.key {
+            self.reset_game_state();
+        }
+    }
+
     fn game_over(&mut self, ctx: &mut BTerm) {
         ctx.set_active_console(3);
         ctx.print_color_centered(2, RED, BLACK, "Your quest has ended");
         ctx.print_color_centered(9, GREEN, BLACK, "Press 1 to play again.");
 
         if let Some(VirtualKeyCode::Key1) = ctx.key {
-            self.ecs = World::default();
-            self.resources = Resources::default();
-            let map_builder = MapBuilder::new();
-
-            self.resources.insert(map_builder.map);
-            self.resources.insert(Camera::new(map_builder.player_start));
-            self.resources.insert(0_usize);
-            self.resources.insert(TurnState::AwaitingInput);
-
-            spawn_player(&mut self.ecs, map_builder.player_start);
-            spawn_key(&mut self.ecs, map_builder.key_pos);
-            map_builder
-                .immovable_enemies
-                .iter()
-                .for_each(|pos| spawn_immovable_enemy(&mut self.ecs, *pos));
-
-            map_builder
-                .movable_enemies
-                .iter()
-                .for_each(|pos| spawn_movable_enemy(&mut self.ecs, *pos));
+            self.reset_game_state()
         }
     }
 }
@@ -122,6 +141,7 @@ impl GameState for State {
                 .monster_systems
                 .execute(&mut self.ecs, &mut self.resources),
             TurnState::GameOver => self.game_over(ctx),
+            TurnState::Victory => self.victory(ctx)
         }
         render_draw_buffer(ctx).expect("Render Error");
     }
