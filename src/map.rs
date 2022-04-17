@@ -3,16 +3,20 @@ use std::fs;
 
 pub struct Map {
     pub tiles: Vec<char>,
+    pub revealed_tiles: Vec<bool>
 }
 
 impl Map {
     pub fn new() -> Self {
-        Self {
-            tiles: fs::read_to_string("MAP_LVL_2.txt")
+        let tiles = fs::read_to_string("MAP_LVL_2.txt")
                 .unwrap()
                 .chars()
                 .filter(|a| *a != '\n' && *a != '\r')
-                .collect::<Vec<char>>(),
+                .collect::<Vec<char>>();
+        let num_of_tiles = tiles.len();
+        Self {
+            tiles,
+            revealed_tiles: vec![false; num_of_tiles]
         }
     }
 

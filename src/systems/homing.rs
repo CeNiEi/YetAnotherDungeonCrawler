@@ -7,6 +7,7 @@ use crate::prelude::*;
 #[read_component(Enemy)]
 #[read_component(RangedSprite)]
 #[read_component(MovableSprite)]
+#[read_component(FieldOfView)]
 pub fn homing(#[resource] map: &Map, ecs: &SubWorld, commands: &mut CommandBuffer) {
     let mut player = <(Entity, &Point)>::query().filter(component::<Player>());
 
@@ -72,12 +73,15 @@ pub fn homing(#[resource] map: &Map, ecs: &SubWorld, commands: &mut CommandBuffe
         }
     });
 
-    let mut moving_enemies = <(Entity, &Point, &MovableSprite)>::query()
+    let mut moving_enemies = <(Entity, &Point, &MovableSprite, &FieldOfView)>::query()
         .filter(component::<Homing>() & component::<Enemy>());
 
     moving_enemies
         .iter(ecs)
-        .for_each(|(entity, pos, movable_sprite)| {
+        .for_each(|(entity, pos, movable_sprite, fov)| {
+            if !fov.visible_tiles.contains(&player_pos) {
+                return;
+            }
             let idx = map_idx(pos.x, pos.y);
             if let Some(destination) = DijkstraMap::find_lowest_exit(&dijkstra_map, idx, map) {
                 let distance = DistanceAlg::Pythagoras.distance2d(*pos, *player_pos);
