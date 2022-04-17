@@ -20,7 +20,7 @@ pub fn combat(ecs: &mut SubWorld, commands: &mut CommandBuffer) {
             .get_component_mut::<Health>()
         {
             health.current -= 1;
-            println!("{:?}, {}, {}", victim, health.current + 1, health.current);
+            //println!("{:?}, {}, {}", victim, health.current + 1, health.current);
             if health.current < 1 && !is_player{
                 commands.remove(*victim);
             }

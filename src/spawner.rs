@@ -58,10 +58,7 @@ pub fn spawn_immovable_enemy(ecs: &mut World, pos: Point) {
     ecs.push((
         Enemy,
         pos,
-        Health {
-            current: 10,
-            max: 10,
-        },
+        Health { current: 5, max: 5 },
         Name("BossMonster".to_string()),
         ImmovableRender3x3 {
             color: ColorPair::new(WHITE, BLACK),
@@ -192,5 +189,18 @@ pub fn spawn_key(ecs: &mut World, pos: Point) {
             color: ColorPair::new(WHITE, BLACK),
             glyph: to_cp437(to_char((9 * 16 + 11) as u8)),
         },
+    ));
+}
+
+pub fn spawn_healing_potion(ecs: &mut World, pos: Point) {
+    ecs.push((
+        Healer,
+        Item,
+        pos,
+        ItemRender {
+            color: ColorPair::new(WHITE, BLACK),
+            glyph: to_cp437(to_char((3 * 16 + 15) as u8)),
+        },
+        Name("Healing Potion".to_string()),
     ));
 }

@@ -72,20 +72,25 @@ pub struct FieldOfView {
 impl FieldOfView {
     pub fn new(radius: i32) -> Self {
         Self {
-            visible_tiles: HashSet::new(), 
-            radius, 
-            is_dirty: true
+            visible_tiles: HashSet::new(),
+            radius,
+            is_dirty: true,
         }
     }
     pub fn clone_dirty(&self) -> Self {
         Self {
-            visible_tiles: HashSet::new(), 
-            radius: self.radius, 
-            is_dirty: true
+            visible_tiles: HashSet::new(),
+            radius: self.radius,
+            is_dirty: true,
         }
     }
 }
 
+#[derive(Clone, PartialEq)]
+pub struct Carried(pub Entity);
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Healer;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Item;
@@ -147,4 +152,10 @@ pub struct WantsToChangeMovableSpriteMode {
 pub struct WantsToChangeRangedSpriteMode {
     pub entity: Entity,
     pub mode: RangedSpriteMode,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ActivateItem {
+    pub used_by: Entity,
+    pub item: Entity,
 }

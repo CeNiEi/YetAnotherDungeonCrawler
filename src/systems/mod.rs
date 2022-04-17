@@ -9,6 +9,7 @@ mod mode_change;
 mod movement;
 mod player_input;
 mod tooltips;
+mod use_items;
 
 use crate::prelude::*;
 
@@ -33,6 +34,7 @@ pub fn build_player_scheduler() -> Schedule {
     Schedule::builder()
         .add_system(movement::movement_system())
         .flush()
+        .add_system(use_items::use_items_system())
         .add_system(combat::combat_system())
         .flush()
         .add_system(fov::fov_system())
@@ -55,6 +57,7 @@ pub fn build_monster_scheduler() -> Schedule {
     Schedule::builder()
         .add_system(movement::movement_system())
         .flush()
+        .add_system(use_items::use_items_system())
         .add_system(combat::combat_system())
         .add_system(combat::auto_reduce_health_system())
         .flush()

@@ -21,7 +21,7 @@ mod prelude {
     pub use crate::turn_state::*;
 
     pub const SCREEN_WIDTH: i32 = 146;
-    pub const SCREEN_HEIGHT: i32 = 81;
+    pub const SCREEN_HEIGHT: i32 = 160;
     pub const DISPLAY_WIDTH: i32 = 40;
     pub const DISPLAY_HEIGHT: i32 = 25;
 }
@@ -59,6 +59,11 @@ impl State {
             .iter()
             .for_each(|pos| spawn_movable_enemy(&mut ecs, *pos));
 
+        map_builder
+            .potions
+            .iter()
+            .for_each(|pos| spawn_healing_potion(&mut ecs, *pos));
+ 
         Self {
             ecs,
             resources,
@@ -89,6 +94,11 @@ impl State {
             .movable_enemies
             .iter()
             .for_each(|pos| spawn_movable_enemy(&mut self.ecs, *pos));
+
+        map_builder
+            .potions
+            .iter()
+            .for_each(|pos| spawn_healing_potion(&mut self.ecs, *pos));
     }
 
     fn victory(&mut self, ctx: &mut BTerm) {
@@ -164,7 +174,7 @@ fn main() -> BError {
         //monsters - 2
         .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont_custom_2.png")
         //tooltip - 3
-        .with_simple_console_no_bg(SCREEN_WIDTH, SCREEN_HEIGHT, "terminal8x8.png")
+        .with_simple_console_no_bg(DISPLAY_WIDTH * 2, DISPLAY_HEIGHT * 2, "terminal8x8.png")
         .build()?;
 
     main_loop(context, State::new())
