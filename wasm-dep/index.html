@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type" />
+  </head>
+  <body>
+    <p>Yet Another Dungeon Crawler</p>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <script src="./my_game.js"></script>
+    <script>
+      window.addEventListener("load", async () => {
+        await wasm_bindgen("./my_game.wasm");
+      });
+    </script>
+  </body>
+</html>
