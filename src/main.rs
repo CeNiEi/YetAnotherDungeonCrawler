@@ -63,7 +63,7 @@ impl State {
             .potions
             .iter()
             .for_each(|pos| spawn_healing_potion(&mut ecs, *pos));
- 
+
         Self {
             ecs,
             resources,
@@ -151,7 +151,7 @@ impl GameState for State {
                 .monster_systems
                 .execute(&mut self.ecs, &mut self.resources),
             TurnState::GameOver => self.game_over(ctx),
-            TurnState::Victory => self.victory(ctx)
+            TurnState::Victory => self.victory(ctx),
         }
         render_draw_buffer(ctx).expect("Render Error");
     }
@@ -161,9 +161,8 @@ embedded_resource!(TILE_FONT_1, "../resources/dungeonfont_custom_1.png");
 embedded_resource!(TILE_FONT_2, "../resources/dungeonfont_custom_2.png");
 
 fn main() -> BError {
-
-link_resource!(TILE_FONT_1, "resources/dungeonfont_custom_1.png");
-link_resource!(TILE_FONT_2, "resources/dungeonfont_custom_2.png");
+    link_resource!(TILE_FONT_1, "resources/dungeonfont_custom_1.png");
+    link_resource!(TILE_FONT_2, "resources/dungeonfont_custom_2.png");
 
     let context = BTermBuilder::new()
         .with_title("Dungeon Crawler")
