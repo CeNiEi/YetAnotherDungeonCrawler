@@ -1,5 +1,5 @@
 use crate::prelude::*;
-use std::fs;
+const MAP: &str = include_str!("../MAP_LVL_2.txt");
 
 pub struct Map {
     pub tiles: Vec<char>,
@@ -8,8 +8,7 @@ pub struct Map {
 
 impl Map {
     pub fn new() -> Self {
-        let tiles = fs::read_to_string("MAP_LVL_2.txt")
-                .unwrap()
+        let tiles = MAP
                 .chars()
                 .filter(|a| *a != '\n' && *a != '\r')
                 .collect::<Vec<char>>();
