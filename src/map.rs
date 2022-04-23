@@ -3,19 +3,19 @@ const MAP: &str = include_str!("../MAP_LVL_2.txt");
 
 pub struct Map {
     pub tiles: Vec<char>,
-    pub revealed_tiles: Vec<bool>
+    pub revealed_tiles: Vec<bool>,
 }
 
 impl Map {
     pub fn new() -> Self {
         let tiles = MAP
-                .chars()
-                .filter(|a| *a != '\n' && *a != '\r')
-                .collect::<Vec<char>>();
+            .chars()
+            .filter(|a| *a != '\n' && *a != '\r')
+            .collect::<Vec<char>>();
         let num_of_tiles = tiles.len();
         Self {
             tiles,
-            revealed_tiles: vec![false; num_of_tiles]
+            revealed_tiles: vec![false; num_of_tiles],
         }
     }
 
@@ -24,7 +24,7 @@ impl Map {
     }
 
     pub fn can_enter_tile(&self, point: Point) -> bool {
-        self.in_bounds(point) && self.tiles[map_idx(point.x, point.y)] == ' '
+        self.in_bounds(point) && !self.is_opaque(map_idx(point.x, point.y))
     }
 
     fn valid_exit(&self, loc: Point, delta: Point) -> Option<usize> {
@@ -77,7 +77,11 @@ impl BaseMap for Map {
     }
 
     fn is_opaque(&self, idx: usize) -> bool {
-        !(self.tiles[idx] == ' ' || self.tiles[idx] == 'O' || self.tiles[idx] == 'M')
+        !(self.tiles[idx] == ' '
+            || self.tiles[idx] == 'O'
+            || self.tiles[idx] == 'M'
+            || self.tiles[idx] == 'H'
+            || self.tiles[idx] == 'P')
     }
 }
 

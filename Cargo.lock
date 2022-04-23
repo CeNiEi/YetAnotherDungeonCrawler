@@ -1082,7 +1082,9 @@ name = "my_game"
 version = "0.1.0"
 dependencies = [
  "bracket-lib",
+ "console_error_panic_hook",
  "legion",
+ "wasm-bindgen",
 ]
 
 [[package]]
