@@ -1,5 +1,5 @@
 use bracket_lib::prelude::BError;
 
 fn main() -> BError {
-    my_game::main()
+    yet_another_dungeon_crawler::main()
 }
