@@ -9,6 +9,7 @@ use crate::prelude::*;
 #[read_component(MovableSprite)]
 #[read_component(Item)]
 #[read_component(Carried)]
+#[read_component(Key)]
 pub fn player_input(
     ecs: &mut SubWorld,
     #[resource] key: &Option<VirtualKeyCode>,
@@ -45,7 +46,7 @@ pub fn player_input(
 
             let mut enemies = <(Entity, &Point)>::query().filter(component::<Enemy>());
 
-            let mut items = <(Entity, &Item, &Point)>::query();
+            let mut items = <(Entity, &Item, &Point)>::query().filter(!component::<Key>());
             items
                 .iter(ecs)
                 .filter(|(_entity, _item, &item_pos)| item_pos == destination)

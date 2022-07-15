@@ -81,7 +81,8 @@ impl BaseMap for Map {
             || self.tiles[idx] == 'O'
             || self.tiles[idx] == 'M'
             || self.tiles[idx] == 'H'
-            || self.tiles[idx] == 'P')
+            || self.tiles[idx] == 'P'
+            || self.tiles[idx] == 'K')
     }
 }
 
