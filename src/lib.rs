@@ -28,6 +28,7 @@ mod prelude {
 
 use prelude::*;
 extern crate console_error_panic_hook;
+use wasm_bindgen::prelude::*;
 
 struct State {
     ecs: World,
@@ -161,9 +162,13 @@ impl GameState for State {
 embedded_resource!(TILE_FONT_1, "../resources/dungeonfont_custom_1.png");
 embedded_resource!(TILE_FONT_2, "../resources/dungeonfont_custom_2.png");
 
-pub fn main() -> BError {
+#[wasm_bindgen(start)]
+pub fn starter() {
     std::panic::set_hook(Box::new(console_error_panic_hook::hook));
+    main().unwrap()
+}
 
+pub fn main() -> BError {
     link_resource!(TILE_FONT_1, "resources/dungeonfont_custom_1.png");
     link_resource!(TILE_FONT_2, "resources/dungeonfont_custom_2.png");
 
