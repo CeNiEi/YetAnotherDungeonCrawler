@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2018"
 
 [lib]
-crate-type = ["cdylib", "rlib"]
+crate-type = ["cdylib"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -14,5 +14,5 @@ legion = { version = "0.4.0", default-features = false, features = [
     "wasm-bindgen",
     "codegen",
 ] }
-wasm-bindgen = "0.2.80"
 console_error_panic_hook = "0.1.7"
+wasm-bindgen = "0.2.80"
